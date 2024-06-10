@@ -8,6 +8,8 @@ import urllib.parse as url_parse
 import urllib.request as url_req
 from html.parser import HTMLParser
 
+g_version = "1.1"
+
 #==============================================================================
 # List of vendors/products of special interest (to me).
 # Items whose Vendor/Product field contains any of these will be shown in red
@@ -188,7 +190,7 @@ class MyHTMLParser(HTMLParser):
     def save_row(self):
         row = self.priority + ': ' + self.description \
             + ' <a href="' + self.url + '" target="_blank">' \
-            + self.url + '</a><hr>'        
+            + self.url + '</a><hr>'
 
         if self.vendor in self.rows:
             self.rows[self.vendor] = self.rows[self.vendor] + row
@@ -197,6 +199,8 @@ class MyHTMLParser(HTMLParser):
 
     # Dump the accumlated data as a web page
     def dump_report(self, url):
+        print('Found ' + str(len(self.rows)) + ' items')
+
         path = url_parse.urlparse(url).path.split('/')
         filename = path[len(path) - 1]
         with open(filename + '.html', 'w', encoding="utf-8") as outfile:
@@ -206,7 +210,7 @@ class MyHTMLParser(HTMLParser):
                          + '<h1>Content from <a href="' + url \
                          + '" target="_blank">' + url + '</a></h1>')
 
-            for i in sorted(self.rows.keys()):
+            for i in sorted(self.rows.keys(), key=str.lower):
                 lc_vendor = i.lower()
                 color = 'black'
                 state = ''
@@ -241,6 +245,8 @@ Usage: cisa-parser.py {url}')
 - output filename is the last section of the URL (typically sbYY-ZZZ)
 """)
         return
+
+    print('cisa-parser version ' + g_version)
 
     url = sys.argv[1]
     req = url_req.Request(url, headers={'User-Agent': ' Mozilla/5.0'})
