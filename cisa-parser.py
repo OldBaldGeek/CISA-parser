@@ -6,22 +6,24 @@
 import sys
 import urllib.parse as url_parse
 import urllib.request as url_req
+import html
 from html.parser import HTMLParser
 
-g_version = "1.1"
+g_version = "1.2"
 
 #==============================================================================
 # List of vendors/products of special interest (to me).
 # Items whose Vendor/Product field contains any of these will be shown in red
 # and expanded by default.
-# Yes, this could be a separate configuration file, but why?
+# Yes, this could be a separate configuration file, but why bother?
 vendors_of_interest = ['apple', 'ios', 'microsoft', 'windows', \
                        'google', 'chrome', 'mozilla', 'firefox', \
-                       'adobe', 'symantec', \
+                       'adobe', 'libreoffice', 'python', 'symantec', \
                        'dell', 'epson', 'acer', 'asus', \
                        'ssh', 'nmap', 'wireshark', 'filezilla', '7zip', \
                        'notepad++', 'notepad2', 'freecommander', 'obs', \
-                       'reaper', 'zoom', 'musescore', 'shotcut' ]
+                       'reaper', 'zoom', 'musescore', 'shotcut', \
+                       '7-zip' ]
 
 #==============================================================================
 # Parse CISA webpage assuming structure as of 10 April 2024:
@@ -222,9 +224,9 @@ class MyHTMLParser(HTMLParser):
 
                 outfile.write( '  <details' + state + '>\n' \
                              + '    <summary style="font-size:1.2em;' \
-                             + ' color:' + color + ';">' + i + '</summary>\n' \
+                             + ' color:' + color + ';">' + html.escape(i) + '</summary>\n' \
                              + '    <div style="margin-left:40px">' \
-                             + self.rows[i] + '</div>\n</details>\n')
+                             + html.escape(self.rows[i]) + '</div>\n</details>\n')
 
             outfile.write('</body>\n</html>\n')
 
