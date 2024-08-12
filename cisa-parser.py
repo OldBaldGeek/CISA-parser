@@ -9,7 +9,7 @@ import urllib.request as url_req
 import html
 from html.parser import HTMLParser
 
-g_version = "1.2"
+g_version = "1.3"
 
 #==============================================================================
 # List of vendors/products of special interest (to me).
@@ -125,7 +125,7 @@ class MyHTMLParser(HTMLParser):
     def end_tag_vendor(self, tag):
         if tag == 'td':
             # Save/use the vendor/product info. Get Description
-            self.vendor = self.content
+            self.vendor = html.escape(self.content)
             self.tag_handler = self.tag_ignore
             self.end_tag_handler = self.end_tag_description
             self.content = ''
@@ -190,7 +190,7 @@ class MyHTMLParser(HTMLParser):
 
     # Save the current row for later output
     def save_row(self):
-        row = self.priority + ': ' + self.description \
+        row = self.priority + ': ' + html.escape(self.description) \
             + ' <a href="' + self.url + '" target="_blank">' \
             + self.url + '</a><hr>'
 
@@ -226,7 +226,7 @@ class MyHTMLParser(HTMLParser):
                              + '    <summary style="font-size:1.2em;' \
                              + ' color:' + color + ';">' + html.escape(i) + '</summary>\n' \
                              + '    <div style="margin-left:40px">' \
-                             + html.escape(self.rows[i]) + '</div>\n</details>\n')
+                             + self.rows[i] + '</div>\n</details>\n')
 
             outfile.write('</body>\n</html>\n')
 
