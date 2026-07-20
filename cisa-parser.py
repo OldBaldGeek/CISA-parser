@@ -5,11 +5,12 @@
 
 import sys
 import urllib.parse as url_parse
-import urllib.request as url_req
+import requests
 import html
 from html.parser import HTMLParser
 
-g_version = "1.3"
+# Updated to use requests because cisa.gov no longer responds to my original urllib version
+g_version = "1.4"
 
 #==============================================================================
 # List of vendors/products of special interest (to me).
@@ -23,7 +24,8 @@ vendors_of_interest = ['apple', 'ios', 'microsoft', 'windows', \
                        'ssh', 'nmap', 'wireshark', 'filezilla', '7zip', \
                        'notepad++', 'notepad2', 'freecommander', 'obs', \
                        'reaper', 'zoom', 'musescore', 'shotcut', \
-                       '7-zip' ]
+                       '7-zip', 'tp-link', 'tplink', \
+                       'cobian' ]
 
 #==============================================================================
 # Parse CISA webpage assuming structure as of 10 April 2024:
@@ -250,11 +252,13 @@ Usage: cisa-parser.py {url}')
 
     print('cisa-parser version ' + g_version)
 
+    htmldata = ''
     url = sys.argv[1]
-    req = url_req.Request(url, headers={'User-Agent': ' Mozilla/5.0'})
-    client = url_req.urlopen(req)
-    htmldata = client.read()
-
+    req = requests.get(url)
+    htmldata = req.content
+    #req = url_req.Request(url, headers={'User-Agent': ' Mozilla/5.0'})
+    #client = url_req.urlopen(req)
+    #htmldata = client.read()
     parser = MyHTMLParser()
     parser.feed(htmldata.decode('utf-8'))
 
